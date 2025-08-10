@@ -11,28 +11,54 @@ func CurrTime() string {
 	return currTime
 }
 
-// Default 补充开头
-func Default(s, level string, values ...interface{}) string {
-	msg := fmt.Sprintf("%s | %-10s | - %s", CurrTime(), level, PyFormat(s, values...))
+// MakeLog 制作日志
+func MakeLog(level, s string, values ...any) string {
+	//msg := fmt.Sprintf("%s | %-10s | - %s", CurrTime(), level, PyFormat(s, values...))
+	msg := fmt.Sprintf("%s | %-10s | - %s", CurrTime(), level, fmt.Sprintf(s, values...))
 	return msg
 }
 
-func Debug(s string, values ...interface{}) {
-	Print(Default(s, "DEBUG", values...), "blue")
+// Debug 调试日志
+func Debug(s string, values ...any) {
+	Print(MakeLog("INFO", s, values...), "blue")
 }
 
-func Info(s string, values ...interface{}) {
-	Print(Default(s, "INFO", values...), "")
+// Info 一般日志
+func Info(s string, values ...any) {
+	Print(MakeLog("INFO", s, values...), "")
 }
 
-func Warning(s string, values ...interface{}) {
-	Print(Default(s, "WARNING", values...), "yellow")
+// Warning 警告日志
+func Warning(s string, values ...any) {
+	Print(MakeLog("WARNING", s, values...), "yellow")
 }
 
-func Error(s string, values ...interface{}) {
-	Print(Default(s, "ERROR", values...), "red")
+// Error 错误日志
+func Error(s string, values ...any) {
+	Print(MakeLog("ERROR", s, values...), "red")
 }
 
-func Success(s string, values ...interface{}) {
-	Print(Default(s, "SUCCESS", values...), "green")
+// Success 成功日志
+func Success(s string, values ...any) {
+	Print(MakeLog("SUCCESS", s, values...), "green")
+}
+
+// Red 红色打印
+func Red(s string, values ...any) {
+	Printf("red", s+"\n", values...)
+}
+
+// Yellow 黄色打印
+func Yellow(s string, values ...any) {
+	Printf("yellow", s+"\n", values...)
+}
+
+// Blue 蓝色打印
+func Blue(s string, values ...any) {
+	Printf("blue", s+"\n", values...)
+}
+
+// Green 绿色打印
+func Green(s string, values ...any) {
+	Printf("green", s+"\n", values...)
 }

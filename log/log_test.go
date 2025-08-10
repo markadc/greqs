@@ -3,9 +3,13 @@ package log
 import "testing"
 
 func TestLog(t *testing.T) {
-	Debug("hello world")
-	Info("hello world")
-	Warning("hello world")
-	Error("hello world")
-	Success("hello world")
+	name := "Greqs"
+	age := 22
+
+	Info("Hello World")
+	Debug("hello %v", name)
+	Info("type is %T", name)
+	Warning("values is %q", name)
+	Error("in %p", &name)
+	Success("Name is %s Age is %d", name, age)
 }
