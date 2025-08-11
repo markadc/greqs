@@ -80,7 +80,7 @@ func UseProxy1() {
 		fmt.Printf("Error => %s\n", err)
 		return
 	}
-	
+
 	fmt.Println(resp.StatusCode)
 	fmt.Println(resp.Text())
 }

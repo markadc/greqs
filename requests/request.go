@@ -56,12 +56,12 @@ func (w *Worker) SetDefaultProxy(proxy string) {
 
 // 发送 GET 请求
 func (c *Worker) Get(urlStr string, opts *Options) (*Response, error) {
-	return c.do("GET", urlStr, opts)
+	return c.Send("GET", urlStr, opts)
 }
 
 // 发送 POST 请求
 func (c *Worker) Post(urlStr string, opts *Options) (*Response, error) {
-	return c.do("POST", urlStr, opts)
+	return c.Send("POST", urlStr, opts)
 }
 
 // 构造完整的 url 地址
@@ -79,7 +79,7 @@ func MakeUrl(urlStr string, params map[string]string) string {
 }
 
 // 发送 HTTP 请求，根据方法类型 ( GET / POST ) 分别处理
-func (c *Worker) do(method, urlStr string, opts *Options) (*Response, error) {
+func (c *Worker) Send(method, urlStr string, opts *Options) (*Response, error) {
 	method = strings.ToUpper(method)
 	if method != "GET" && method != "POST" {
 		return nil, fmt.Errorf("不支持的HTTP方法: %s", method)
