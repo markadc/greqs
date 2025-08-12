@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// 请求
+// Request 请求
 type Request struct {
 	Method  string
 	Url     string
@@ -18,7 +18,7 @@ type Request struct {
 	Timeout time.Duration
 }
 
-// Do 执行请求任务
+// Do 执行请求
 func (r *Request) Do() (*Response, error) {
 	method := strings.ToUpper(r.Method)
 	if method != "GET" && method != "POST" {

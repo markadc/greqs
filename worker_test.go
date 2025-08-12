@@ -20,7 +20,8 @@ func m2(cli *http.Client) {
 }
 
 func TestWorker_Get(t *testing.T) {
-	worker := NewWorker("", 5*time.Second, m1, m2)
+	//worker := NewWorker("", 5*time.Second, m1, m2)
+	worker := NewWorker("", 5*time.Second, m1, nil)
 
 	url := "https://httpbin.org/get"
 	resp, err := worker.Get(url, nil)

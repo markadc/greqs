@@ -5,11 +5,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	_url "net/url"
 	"strings"
 	"time"
 )
+
+// MakeUrl 构建完整的 url 地址
+func MakeUrl(url string, params S) string {
+	q := _url.Values{}
+	for key, val := range params {
+		q.Add(key, val)
+	}
+	if !strings.Contains(url, "?") {
+		url += "?"
+	}
+	url += q.Encode()
+	return url
+}
 
 // SetHeaders 为请求设置请求头
 func SetHeaders(req *http.Request, headers S) {
@@ -18,26 +32,44 @@ func SetHeaders(req *http.Request, headers S) {
 	}
 }
 
-// DoRequest 发送请求，获取响应
-func DoRequest(req *http.Request) (*Response, error) {
-	// 发送请求
-	resp, err := http.DefaultClient.Do(req)
+// MakeGetRequest 创建 GET 请求
+func MakeGetRequest(url string, headers S) (*http.Request, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("发送请求失败: %w", err)
+		return nil, err
 	}
-	defer func() { _ = resp.Body.Close() }()
-
-	// 读取响应
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("读取响应失败: %w", err)
-	}
-
-	// 返回响应结构体
-	return &Response{resp, bodyBytes}, nil
+	SetHeaders(req, headers)
+	return req, nil
 }
 
-// GetClient 获取一个客户端
+// MakePostRequest 创建 POST 请求（JSON 形式）
+func MakePostRequest(url string, headers S, data A) (*http.Request, error) {
+	body, _ := json.Marshal(data)
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	SetHeaders(req, headers)
+	req.Header.Set("Content-Type", "application/json")
+	return req, nil
+}
+
+// MakePostFormRequest 创建 POST 请求（表单形式）
+func MakePostFormRequest(url string, headers S, form S) (*http.Request, error) {
+	val := _url.Values{}
+	for k, v := range form {
+		val.Set(k, v)
+	}
+	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(val.Encode()))
+	if err != nil {
+		return nil, err
+	}
+	SetHeaders(req, headers)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return req, nil
+}
+
+// GetClient 获取客户端
 func GetClient(proxy string, timeout time.Duration) *http.Client {
 	client := &http.Client{}
 	if proxy != "" {
@@ -67,42 +99,10 @@ func Do(cli *http.Client, req *http.Request) (*Response, error) {
 	return &Response{resp, bodyBytes}, nil
 }
 
-// Get 发送 GET 请求
-func Get(url string, headers S) (*Response, error) {
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	SetHeaders(req, headers)
-	return DoRequest(req)
-
-}
-
-// POST 发送 POST 请求（JOSN 形式）
-func Post(url string, data A, headers S) (*Response, error) {
-	body, _ := json.Marshal(data)
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
-	if err != nil {
-		return nil, err
-	}
-	SetHeaders(req, headers)
-	req.Header.Set("Content-Type", "application/json")
-	return DoRequest(req)
-}
-
-// PostForm 发送 POST 请求（Form 形式）
-func PostForm(url string, form S, headers S) (*Response, error) {
-	val := _url.Values{}
-	for k, v := range form {
-		val.Set(k, v)
-	}
-	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(val.Encode()))
-	if err != nil {
-		return nil, err
-	}
-	SetHeaders(req, headers)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	return DoRequest(req)
+func RandInt(min, max int) int {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	num := min + r.Intn(max-min+1)
+	return num
 }
 
 // Options 请求配置

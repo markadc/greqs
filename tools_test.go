@@ -34,7 +34,7 @@ func TestGet(t *testing.T) {
 func TestPost(t *testing.T) {
 	url := "https://httpbin.org/post"
 	data := A{"name": "Greqs", "type": "GoLang"}
-	resp, _ := Post(url, data, headers)
+	resp, _ := Post(url, headers, data)
 
 	fmt.Println(resp.StatusCode)
 	fmt.Println(resp.Text())
@@ -43,7 +43,7 @@ func TestPost(t *testing.T) {
 func TestPostForm(t *testing.T) {
 	url := "https://httpbin.org/post"
 	form := S{"name": "Greqs", "type": "GoLang"}
-	resp, _ := PostForm(url, form, nil)
+	resp, _ := PostForm(url, headers, form)
 
 	fmt.Println(resp.StatusCode)
 	fmt.Println(resp.Text())
@@ -64,11 +64,4 @@ func TestResponse(t *testing.T) {
 	log.Red("Call...PrettyJSONString")
 	pjs, _ := resp.PrettyJSONString()
 	fmt.Printf("%s\n\n", pjs)
-}
-
-func TestSend(t *testing.T) {
-	url := "https://httpbin.org/get"
-	res, _ := Send("GET", url, &Options{Headers: headers})
-	fmt.Println(res.StatusCode)
-
 }
