@@ -1,4 +1,4 @@
-package main
+package greqs
 
 import (
 	"bytes"
@@ -10,67 +10,6 @@ import (
 	"strings"
 	"time"
 )
-
-type S = map[string]string
-type A = map[string]any
-
-// Response 响应
-type Response struct {
-	*http.Response
-	Body []byte
-}
-
-// Text 响应的文本数据
-func (r *Response) Text() string {
-	return string(r.Body)
-}
-
-// JSON 响应的 JSON 数据
-func (r *Response) JSON() (map[string]any, error) {
-	var jsonMap map[string]any
-	err := json.Unmarshal(r.Body, &jsonMap)
-	if err != nil {
-		return nil, err
-	}
-	return jsonMap, err
-}
-
-// JSONString 响应的 JSON 字符串
-func (r *Response) JSONString() (string, error) {
-	jsonMap, err := r.JSON()
-	if err != nil {
-		return "", err
-	}
-	byteArr, err := json.Marshal(jsonMap)
-	if err != nil {
-		return "", err
-	}
-	jsonStr := string(byteArr)
-	return jsonStr, err
-}
-
-// PrettyJSONString 响应的 JSON 字符串（适合输出展示）
-func (r *Response) PrettyJSONString() (string, error) {
-	var buf bytes.Buffer
-	err := json.Indent(&buf, r.Body, "", "  ")
-	if err != nil {
-		return "", fmt.Errorf("格式化JSON失败: %w", err)
-	}
-	return buf.String(), nil
-}
-
-// MakeUrl 构建完整的 url 地址
-func MakeUrl(url string, params S) string {
-	q := _url.Values{}
-	for key, val := range params {
-		q.Add(key, val)
-	}
-	if !strings.Contains(url, "?") {
-		url += "?"
-	}
-	url += q.Encode()
-	return url
-}
 
 // SetHeaders 为请求设置请求头
 func SetHeaders(req *http.Request, headers S) {
@@ -115,8 +54,8 @@ func GetClient(proxy string, timeout time.Duration) *http.Client {
 }
 
 // Do 发送请求，获取响应
-func Do(client *http.Client, req *http.Request) (*Response, error) {
-	resp, err := client.Do(req)
+func Do(cli *http.Client, req *http.Request) (*Response, error) {
+	resp, err := cli.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +90,7 @@ func Post(url string, data A, headers S) (*Response, error) {
 	return DoRequest(req)
 }
 
-// PostForm 发送 POST 请求（表单形式）
+// PostForm 发送 POST 请求（Form 形式）
 func PostForm(url string, form S, headers S) (*Response, error) {
 	val := _url.Values{}
 	for k, v := range form {
@@ -166,7 +105,7 @@ func PostForm(url string, form S, headers S) (*Response, error) {
 	return DoRequest(req)
 }
 
-// 请求配置
+// Options 请求配置
 type Options struct {
 	Params  S
 	Headers S
@@ -183,6 +122,9 @@ func Send(method, url string, opts *Options) (*Response, error) {
 		return nil, fmt.Errorf("仅支持 GET、POST，不支持 %s", method)
 	}
 
+	if opts == nil {
+		opts = &Options{}
+	}
 	cli := GetClient(opts.Proxy, opts.Timeout)
 
 	if method == "GET" {
@@ -215,10 +157,12 @@ func Send(method, url string, opts *Options) (*Response, error) {
 	}
 }
 
-func SendGet(url string, opts *Options) (*Response, error) {
+// SendGetRequest 发送 GET 请求
+func SendGetRequest(url string, opts *Options) (*Response, error) {
 	return Send("GET", url, opts)
 }
 
-func SendPost(url string, opts *Options) (*Response, error) {
+// SendPostRequest 发送 POST 请求（根据 opts 参数自动识别 JSON 或者 Form 形式）
+func SendPostRequest(url string, opts *Options) (*Response, error) {
 	return Send("POST", url, opts)
 }

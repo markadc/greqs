@@ -1,4 +1,4 @@
-package main
+package greqs
 
 import (
 	"fmt"
@@ -64,4 +64,11 @@ func TestResponse(t *testing.T) {
 	log.Red("Call...PrettyJSONString")
 	pjs, _ := resp.PrettyJSONString()
 	fmt.Printf("%s\n\n", pjs)
+}
+
+func TestSend(t *testing.T) {
+	url := "https://httpbin.org/get"
+	res, _ := Send("GET", url, &Options{Headers: headers})
+	fmt.Println(res.StatusCode)
+
 }

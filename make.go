@@ -1,4 +1,4 @@
-package main
+package greqs
 
 import (
 	"bytes"
@@ -7,6 +7,19 @@ import (
 	_url "net/url"
 	"strings"
 )
+
+// MakeUrl 构建完整的 url 地址
+func MakeUrl(url string, params S) string {
+	q := _url.Values{}
+	for key, val := range params {
+		q.Add(key, val)
+	}
+	if !strings.Contains(url, "?") {
+		url += "?"
+	}
+	url += q.Encode()
+	return url
+}
 
 // MakeGetRequest 创建 GET 请求
 func MakeGetRequest(url string, headers S) (*http.Request, error) {
