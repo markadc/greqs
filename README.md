@@ -1,1 +1,43 @@
-# 项目说明一个 golang 的网络请求库# 使用## 简单使用```gopackage mainimport (    "fmt"        "github.com/markadc/greqs"    "github.com/markadc/greqs/log")func main() {	// GET    url := "https://httpbin.org/get"    r1, _ := greqs.Get(url, nil)    fmt.Println(r1.StatusCode)    log.Red(r1.Text())    // POST JOSN    url = "https://httpbin.org/post"    data := greqs.A{"Type": "JSON", "Value": []int{1, 2, 3}}    r2, _ := greqs.Post(url, nil, data)    fmt.Println(r2.StatusCode)    log.Yellow(r2.Text())        // POST From    url = "https://httpbin.org/post"    form := greqs.S{"Type": "From"}    r3, _ := greqs.PostForm(url, nil, form)    fmt.Println(r3.StatusCode)    log.Blue(r3.Text())}```
+# 项目说明
+
+一个 golang 的网络请求库
+
+# 使用
+
+## 简单使用
+
+```go
+package main
+
+import (
+    "fmt"
+    
+    "github.com/markadc/greqs"
+    "github.com/markadc/greqs/log"
+)
+
+func main() {
+    headers := greqs.S{"User-Agent": "Greqs"}
+    
+    // 发送 GET 请求
+    url := "https://httpbin.org/get"
+    r1, _ := greqs.Get(url, headers)
+    fmt.Println(r1.StatusCode)
+    log.Red(r1.Text())
+    
+    // 发送 POST JOSN 请求
+    url = "https://httpbin.org/post"
+    data := greqs.A{"Type": "JSON", "Value": []int{1, 2, 3}}
+    r2, _ := greqs.Post(url, headers, data)
+    fmt.Println(r2.StatusCode)
+    log.Yellow(r2.Text())
+    
+    // 发送 POST From 请求
+    url = "https://httpbin.org/post"
+    form := greqs.S{"Type": "From"}
+    r3, _ := greqs.PostForm(url, headers, form)
+    fmt.Println(r3.StatusCode)
+    log.Blue(r3.Text())
+}
+
+```

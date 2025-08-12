@@ -8,23 +8,25 @@ import (
 )
 
 func main() {
-	// GET
+	headers := greqs.S{"User-Agent": "Greqs"}
+
+	// 发送 GET 请求
 	url := "https://httpbin.org/get"
-	r1, _ := greqs.Get(url, nil)
+	r1, _ := greqs.Get(url, headers)
 	fmt.Println(r1.StatusCode)
 	log.Red(r1.Text())
 
-	// POST JOSN
+	// 发送 POST JOSN 请求
 	url = "https://httpbin.org/post"
 	data := greqs.A{"Type": "JSON", "Value": []int{1, 2, 3}}
-	r2, _ := greqs.Post(url, nil, data)
+	r2, _ := greqs.Post(url, headers, data)
 	fmt.Println(r2.StatusCode)
 	log.Yellow(r2.Text())
 
-	// POST From
+	// 发送 POST From 请求
 	url = "https://httpbin.org/post"
 	form := greqs.S{"Type": "From"}
-	r3, _ := greqs.PostForm(url, nil, form)
+	r3, _ := greqs.PostForm(url, headers, form)
 	fmt.Println(r3.StatusCode)
 	log.Blue(r3.Text())
 }
