@@ -8,14 +8,14 @@ import (
 
 // Request 请求
 type Request struct {
-	Method  string
-	Url     string
-	Params  S
-	Headers S
-	Data    A
-	Form    S
-	Proxy   string
-	Timeout time.Duration
+	Method  string        // 请求方法 GET or POST
+	Url     string        // 网址
+	Params  S             // 查询字符串
+	Headers S             // 请求头
+	Data    A             // JSON 请求体
+	Form    S             // 请求表单
+	Proxy   string        // 代理
+	Timeout time.Duration // 超时
 }
 
 // Do 执行请求
