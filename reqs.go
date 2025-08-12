@@ -10,7 +10,7 @@ func Get(url string, headers S) (*Response, error) {
 	return req.Do()
 }
 
-// POST 发送 POST 请求（JOSN 形式）
+// Post 发送 POST 请求（JOSN 形式）
 func Post(url string, headers S, data A) (*Response, error) {
 	req := &Request{
 		Method:  "POST",
